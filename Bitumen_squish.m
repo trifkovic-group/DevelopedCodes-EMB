@@ -27,7 +27,7 @@ out_element=zeros(X,Y,Z);
 P_element=[];
 p_element=[];
 
-if RP(i).PixelList(1,3)==1 && RP(i).PixelList(end,3)==z
+if RP(i).PixelList(1,3)==1 && RP(i).PixelList(end,3)==z %if the object touches the top layer or bottom layer, don't move it
     Out1(RP(i).PixelIdxList)=1;
 
 else
@@ -35,8 +35,8 @@ else
 
 %% this section defines the coordinates of the pixels of each layer (Z)
 for j=1:x1pl-1
-A1=RP(i).PixelList(j,:); %<--
-B=RP(i).PixelList(j+1,:); %<--
+A1=RP(i).PixelList(j,:); 
+B=RP(i).PixelList(j+1,:); 
 if A1(3)==B(3) 
 else
 count=count+1;
@@ -64,7 +64,7 @@ mati=size(Mat);
 
 %% This section eliminates the similar layers (They have to be different in at least dif% to be considered different)
 
-%%starting from here july 17th
+
 for k=2:mati(1)
     
    A2=[];
@@ -130,16 +130,4 @@ end
 end
 end
 
-
-
-
-% %Writes the images that are opened in Avizo
-% cd 'C:\Users\Trifkovic Group\Documents\rahul_confocal\series1\binary'
-%  for slice = 1: Z
-%      I2=imrotate(Out1(:,:,slice),180);
-%      I3(:,:,slice)=rot90(fliplr(I2),-1);
-%  imwrite(I3(:,:,slice),strcat('Slice_cut',num2str(slice),'.tiff'));
-%  end
-% 
-%  end
 
