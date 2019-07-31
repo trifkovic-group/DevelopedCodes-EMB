@@ -5,6 +5,7 @@ function[Out1]=Bitumen_squish(z,bw_bitumen)
 % repetitive layers. Corrects Z position
 % Last modification date: July 17th-2019
 % z=100;
+
 Raw=bw_bitumen;% Array defined in line 81 of Thresholding_Clay_Bitumen.m   
 Raw = bwareaopen(Raw,200,26);% removes very small elements that probably come from noise, 200 means that elements with sizes lower than 200 are erased and 26 is the connectivity level.
 CC = bwconncomp(Raw);% Finds connected components in the binary 3-D image.
@@ -51,10 +52,10 @@ final=[final j+1];
 end
 
 Mat=[];
-Nuevo=[];
+New_image=[];
 comp=[];
 Mat=[initial' final'];
-Nuevo=RP(i).PixelList(1:final(1),:);
+New_image=RP(i).PixelList(1:final(1),:);
 Out = zeros(size(Raw));
 comp=RP(i).PixelList(initial(1):final(1),1:3);
 count1= RP(i).PixelList(1,3);
@@ -83,7 +84,7 @@ for k=2:mati(1)
        [X1,Y1]=size(new_A1);
        vec=ones(X1,1)*count1;
        new_A11=[new_A1(:,1:2) vec];
-       Nuevo=[Nuevo;new_A11];
+       New_image=[New_image;new_A11];
        comp=new_A1(any(new_A1,2),:); 
    end
 end 
@@ -91,7 +92,7 @@ end
 RPPI=0;
 
 % The position of the reconstructed drop of bitumen only considers the top layer
-RPPI = sub2ind(size(Out),Nuevo(:,1),Nuevo(:,2),Nuevo(:,3));
+RPPI = sub2ind(size(Out),New_image(:,1),New_image(:,2),New_image(:,3));
 
 Out(RPPI) = 1;
 cc2=regionprops(Out,'BoundingBox');
@@ -99,23 +100,23 @@ centroid=abs(cc2.BoundingBox(3)+cc2.BoundingBox(6))/2;
 
 % Moves the centroid of the reconstructed drop to that of the original drop of bitumen
 
-Size_Nuevo=size(Nuevo);
+Size_New_image=size(New_image);
 
-if Nuevo(1,3)==1  
+if New_image(1,3)==1  
 RC_Plus=0;
 elseif RP(i).PixelList(end,3)==z
-        RC_move = (z-Nuevo(end,3));
-        RC_Plus=[zeros(Size_Nuevo(1),2) ones(Size_Nuevo(1),1)*RC_move];
-elseif Nuevo(1,3)~=1 && RP(i).PixelList(end,3)~=z
+        RC_move = (z-New_image(end,3));
+        RC_Plus=[zeros(Size_New_image(1),2) ones(Size_New_image(1),1)*RC_move];
+elseif New_image(1,3)~=1 && RP(i).PixelList(end,3)~=z
     RC_move =(RPC-centroid);
-    RC_Plus=[zeros(Size_Nuevo(1),2) ones(Size_Nuevo(1),1)*RC_move];
+    RC_Plus=[zeros(Size_New_image(1),2) ones(Size_New_image(1),1)*RC_move];
 end
 
 
-Nuevo1=Nuevo+RC_Plus;
+New_image1=New_image+RC_Plus;
 
 
-RPPI1 = sub2ind(size(Out1),Nuevo1(:,1),Nuevo1(:,2),round(Nuevo1(:,3)));
+RPPI1 = sub2ind(size(Out1),New_image1(:,1),New_image1(:,2),round(New_image1(:,3)));
 out_element(RPPI1)=1;
 out_element=rot90(fliplr(out_element),1);
 
